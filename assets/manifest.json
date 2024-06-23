@@ -1,0 +1,20 @@
+{
+    "name": "UDI Neuron BLE",
+    "short_name": "NEURON",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#FFFFFF",
+    "description": "Una descripción de tu PWA aquí.",
+    "icons": [
+    {
+        "src": "/logo.png",
+        "sizes": "192x192",
+        "type": "image/png"
+    },
+    {
+        "src": "/logo.png",
+        "sizes": "512x512",
+        "type": "image/png"
+    }
+    ]
+}

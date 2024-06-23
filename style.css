@@ -1,0 +1,112 @@
+body, html {
+    height: 100%;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    place-items: center;
+    min-width: 320px;
+    height: 100%;
+    min-height: 100vh;
+    background: linear-gradient(50deg,#000000,rgb(255, 255, 255))
+}
+
+.form-box {
+    width:300px;
+    padding: 40px;
+    text-align:center;
+    border: 2px solid #43424d;
+    border-radius: 30px;
+    place-items: center;
+    background: linear-gradient(50deg,#05002e,rgb(0, 15, 32))
+
+}
+.form-title {
+    color: #fff;
+    text-transform: uppercase;
+    font-weight: 500;
+}
+
+.form-box input[type="text"],
+.form-box input[type="password"],
+.form-box button[type="submit"]{
+    border: 0;
+    background: none;
+    display: block;
+    margin: 20px auto;
+    padding: 14px 10px;
+    text-align: center;
+    border: 2px solid #fff;
+    width: 200px;
+    outline: none;
+    color:#fff;
+    border-radius: 24px;
+    transition: 0.25s;
+}
+
+.form-box input[type="text"]:focus,
+.form-box input[type="password"]:focus{
+    width: 280px;
+    border-color: #fff;
+}
+
+.form-box button[type="submit"] {
+    border: 0;
+    background: #81819e;
+    cursor: pointer;
+    border: 2px solid#fff;
+}
+
+.form-box button[type="submit"]:hover{
+    background: none;
+}
+
+.img-i{
+    margin: 50px;
+    padding: 0;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    filter: drop-shadow(0px 7px 21px #0919f5);
+    animation: rotar 5s linear infinite;
+}
+
+.l-neuron{
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+}
+
+.bscan {
+    width: 100px;
+    height: 100px;  
+    background-color: #ffffff ;
+    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+
+}
+
+@keyframes rotar{
+    from{
+        transform: rotateY(180deg);
+    }
+    to{
+        transform: rotateY(-180deg);
+    }
+}
+
+.bINICIAR {
+    width: 100px;
+    height: 100px;  
+    background-color: #035511 ;
+    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+
+}
+

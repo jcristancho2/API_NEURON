@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="description" content="NEURON BLE">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="cache-control" content="no-cache, no-store, must-revalidate">
+    <title>NEURON-UDI2024</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="./main.css">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="eeg" href="/eegmat01.json">
+
+</head> 
+
+<body>
+    <div id="app">  
+        <button id="refresh" class="refresh"> <i class="bi bi-arrow-clockwise"></i> </button>     
+        <button id='abrir'class="abrir-menu"> <i class="bi bi-list"></i> </button>
+        <nav class="nav" id="nav">
+            <button id='cerrar' class="cerrar-menu"> <i class="bi bi-x-square-fill"></i></button>
+            <u1 class="nav-list">
+                <h2> </h2>
+                <div class="_routine-config-field_14zgb_15">
+                    <h3 class="_field-title_14zgb_26"></h3>
+                    <div class="_fields-group_14zgb_34">
+                        <div class="_number-stepper_14zgb_1"> 
+                            <label>N muestras:</label> 
+                            <input type="number" id="sampleCount" name="N" min="0.0" max="5000" value="100">
+                        </div>
+                    </div>
+                        <div class="_number-stepper_14zgb_1">
+                            <label>N experiencias:</label> 
+                            <input type="number" id="sampleCount2" name="S" min="0.0" max="5000" >
+                        </div>
+                        <div class="_number-stepper_14zgb_1">
+                            <label>P ini calculo:</label> 
+                            <input type="number" id="sampleCount3" name="alfa1" min="0.0" max="5000" >
+                        </div>
+                </div> 
+                <h2>FILTRO LMS</h2>
+                <div class="_routine-config-field_14zgb_15">
+                    <h3 class="_field-title_14zgb_26"></h3>
+                    <div class="_fields-group_14zgb_34">
+                        <div class="_number-stepper_14zgb_1">
+                            <label>mu:</label> 
+                            <input type="number" name="mu" min="0.0" max="5000" ></div>
+                            <div class="_number-stepper_14zgb_1">
+                                <label>mu1:</label> 
+                                <input type="number" name="mu1" min="0.0" max="5000" >
+                            </div>
+                        </div>
+                        <div class="_number-stepper_14zgb_1">
+                            <label>mu2</label> 
+                            <input type="number" name="mu2" min="0.0" max="5000" >
+                        </div>
+                </div>
+                <h2>coeficientes reflexión</h2>
+                <div class="_routine-config-field_14zgb_15">
+                    <h3 class="_field-title_14zgb_26"></h3>
+                    <div class="_fields-group_14zgb_341">
+                        <div class="_number-stepper_14zgb_1"> 
+                            <label>mu_k:</label> 
+                            <input type="number" name="mu_k" min="0.0" max="5000" ></div>
+                        </div>
+                </div>   
+                <h2>constante filtro NLMS</h2>
+                <div class="_routine-config-field_14zgb_15">
+                    <h3 class="_field-title_14zgb_26"></h3>
+                    <div class="_fields-group_14zgb_34">
+                        <div class="_number-stepper_14zgb_1">
+                            <label>alfaN:</label> 
+                            <input type="number" name="alfaN" min="0.0" max="5000" value="0.01"></div>
+                            <div class="_number-stepper_14zgb_1">
+                                <label>alfaN1:</label> 
+                                <input type="number" name="alfaN1" min="0.0" max="5000" >
+                            </div>
+                        </div>
+                        <div class="_number-stepper_14zgb_1">
+                            <label>alfaN2</label> 
+                            <input type="number" name="alfaN2" min="0.0" max="5000" >
+                        </div>
+                    </div>
+                
+
+                <h2>condiciones Affine</h2>
+                <div class="_routine-config-field_14zgb_15">
+                        <h3 class="_field-title_14zgb_26"></h3>
+                            <div class="_fields-group_14zgb_341">
+                                <div class="_number-stepper_14zgb_1"> 
+                                    <label>mul:</label> 
+                                    <input type="number" name="mul" min="0.0" max="5000" ></div>
+                                </div>
+                </div>
+            </u1>
+            <div style="gap: 16px; display: flex; justify-content: center;">
+                <button id="SAVE" type="submit" >Save</button>
+                <button id="RESET" type="button" >Reset</button>
+            </div>
+        </nav>
+        <nav class="cont-graf" id="cont_graf">
+            <div class="botonc">
+            <button id='cerrar_2' class="cerrar-menu_2"> <i class="bi bi-x-square-fill"></i></button>
+            </div>
+            <div class="barr">
+                <select name="signal" class="list" id="Select-signal">
+                        <option value="">--Select a signal--</option>
+                        <option value="FP1">FP1</option>
+                        <option value="FC3">FC3</option>
+                        <option value="F3">F3</option>
+                        <option value="FC4">FC4</option>
+                        <option value="FP2">FP2</option>
+                        <option value="FZ">FZ</option>
+                </select>
+            </div>    
+            <div class="grafig">
+                <div >
+                    <button class="bots" id="flt1">SIGNAL</button>
+                    <button class="bots" id="flt2">LMS</button>
+                    <button class="bots" id="flt3">NLMS</button>
+                </div>
+                <div class="graf">
+                    <div class="gr">
+                        <canvas id="secondChart"  ></canvas>
+                        <canvas id="thirdChart" ></canvas>
+                        <canvas id="fourChart" ></canvas>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        
+
+        <div class="app">
+            <div>
+                <P style="font-size: 30px "></Pstyle> NEURON </P>
+                <a href="#graficos">
+                <input type="image" src="/assets/logo.png" alt="NEURON logo" data-status="unknown" class="logo NEURON" id="imgclic" >
+            </div>
+                </a>
+                <div>
+                    <p> DEVICE STATE: <strong><span id="bleState" style="color:#d13a30;">Disconnected</span></strong></p>
+                    <div class="status_container">
+                            <div > </div>
+                    </div>
+                    <button id="SCAN" class="btn-hover scan">SCAN
+                    </button>
+                    <br>
+                    <br>
+                </div>
+                <!--<select name="filtres" class="list">
+                    <option  value="">--Select a filtres--</option>
+                    <optgroup label="filtre wavelet">
+                        <option value="1">None</option>
+                        <option value="2">filtre_1</option>
+                        <option value="3">filtre_2</option>
+                        <option value="4">filtre_3</option>
+                    </optgroup>
+                    <optgroup label="filtre adaptative">
+                        <option value="1">None</option>
+                        <option value="5">filtre_4</option>
+                        <option value="6">filtre_5</option>
+                        <option value="7">filtre_6</option>
+                    </optgroup>
+                </select>-->
+                <br>
+                <br>
+                <button id="INICIAR" class="btn-hover in">IN
+                </button>
+                <button id="STOP" class="btn-hover stop">STOP
+                </button>
+                <footer class="app__footer">
+                    <br>
+                    <br>
+                    <br>
+                    <pre>v1.1.1<br>© 2024 VINSCrow 🇨🇴
+                        <br>All rights reserved.
+                    </pre>
+                </footer>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="/main.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/9.4.4/math.min.js"></script>
+
+    
+</body>
+
+</html>

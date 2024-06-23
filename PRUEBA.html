@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vectores Aleatorios con Chart.js y Filtro NLMS</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/9.4.4/math.min.js"></script>
+</head>
+<body>
+    <div>
+
+        <button class="bots" id="flt1">SIGNAL</button>
+        <button class="bots" id="flt3">NLMS</button>
+    </div>
+    <div class="_number-stepper_14zgb_1">
+        <label for="sampleCount">N muestras:</label>
+        <input type="number" id="sampleCount" name="N" min="0.0" max="5000" value="500">
+    </div>
+    <label for="Select-signal">Seleccionar señal:</label>
+    <select name="signal" class="list" id="Select-signal">
+        <option value="">--Select a signal--</option>
+        <option value="FP1">FP1</option>
+        <option value="FC3">FC3</option>
+        <option value="F3">F3</option>
+        <option value="FC4">FC4</option>
+        <option value="FP2">FP2</option>
+        <option value="FZ">FZ</option>
+    </select>
+    <canvas id="myChart" width="400" height="200"></canvas>
+    <canvas id="errorChart" width="400" height="200"></canvas>
+    <script>
+        // Función para crear un vector aleatorio de tamaño `size`
+        function createRandomVector(size) {
+            let vector = [];
+            for (let i = 0; i < size; i++) {
+                vector.push(Math.random() * 5000 - 2500); // Ajustar el rango a -1000 a 1000
+            }
+            return vector;
+        }
+
+        // Función NLMS
+        function nlms(xx, dd, alfa, M, HE) {
+            const N = xx.length;           // Número de iteraciones a realizar
+            let XE = math.zeros(M)._data;  // Buffer de la señal de entrada
+            let y = math.zeros(N)._data;   // Señal de salida filtrada
+            let epri = math.zeros(N)._data; // Señal de error
+            let HE1 = math.zeros(M, N)._data; // Historia de coeficientes
+
+            for (let n = 0; n < N; n++) {
+                HE1.map((row, index) => HE1[index][n] = HE[index]); // Almacenar los coeficientes actuales
+
+                // Actualizar el buffer de entrada
+                XE = [xx[n]].concat(XE.slice(0, M - 1));
+                
+                // Calcular la salida del filtro
+                y[n] = math.dot(HE, XE);
+                
+                // Calcular la señal de error
+                epri[n] = dd[n] - y[n];
+
+                // Actualizar los coeficientes del filtro
+                const denominator = math.dot(XE, XE) + Number.EPSILON;
+                const numerator = alfa * epri[n];
+                const update = XE.map(x => (numerator * x) / denominator);
+                HE = HE.map((h, i) => h + update[i]);
+            }
+
+            return { epri, HE1, y };
+        }
+
+        // Lista de claves de vectores en el JSON
+        const vectorKeys = ['FP1', 'FC3', 'F3', 'FC4', 'FP2', 'FZ'];
+        let randomVectors = {};
+
+        // Función para generar y actualizar el gráfico
+        function generateChart() {
+            // Obtener el tamaño del vector del input
+            const sampleCount = document.getElementById('sampleCount').value;
+
+            // Leer el archivo JSON
+            fetch('PRVECTOR.json')
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Datos del JSON:', data);
+
+                    let datasets = [];
+
+                    vectorKeys.forEach(key => {
+                        if (data[key]) {
+                            let originalVector = data[key];
+                            let randomVector = createRandomVector(sampleCount);
+                            randomVectors[key] = randomVector;
+
+                            datasets.push({
+                                label: `Vector aleatorio para ${key}`,
+                                data: randomVector,
+                                borderColor: getRandomColor(),
+                                fill: false
+                            });
+                        } else {
+                            console.error(`No se encontró el vector ${key} en el JSON`);
+                        }
+                    });
+
+                    // Crear el gráfico
+                    const ctx = document.getElementById('myChart').getContext('2d');
+                    new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: Array.from({ length: sampleCount }, (_, i) => i + 1),
+                            datasets: datasets
+                        },
+                        options: {
+                            responsive: true,
+                            scales: {
+                                x: {
+                                    title: {
+                                        display: true,
+                                        text: 'Índice'
+                                    }
+                                },
+                                y: {
+                                    title: {
+                                        display: true,
+                                        text: 'Valor'
+                                    }
+                                }
+                            }
+                        }
+                    });
+                })
+                .catch(error => console.error('Error al leer el archivo JSON:', error));
+        }
+
+        // Función para aplicar el filtro NLMS y generar el gráfico de error
+        function applyNLMS() {
+            const alfa = 0.01;
+            const M = 5;
+            const HE = new Array(M).fill(0);
+
+            let errorDatasets = [];
+
+            const selectedSignal = document.getElementById('Select-signal').value;
+            const sampleCount = document.getElementById('sampleCount').value;
+
+            if (selectedSignal && randomVectors[selectedSignal]) {
+                let randomVector = randomVectors[selectedSignal].slice(0, sampleCount);
+                let desiredVector = createRandomVector(randomVector.length); // Simulación de datos deseados
+
+                const { epri, HE1, y } = nlms(randomVector, desiredVector, alfa, M, HE);
+
+                errorDatasets.push({
+                    label: `Error NLMS para ${selectedSignal}`,
+                    data: epri,
+                    borderColor: getRandomColor(),
+                    fill: false
+                });
+
+                // Crear el gráfico de errores
+                const ctx = document.getElementById('errorChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: Array.from({ length: epri.length }, (_, i) => i + 1),
+                        datasets: errorDatasets
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Índice'
+                                }
+                            },
+                            y: {
+                                title: {
+                                    display: true,
+                                    text: 'Error'
+                                }
+                            }
+                        }
+                    }
+                });
+            } else {
+                alert("Selecciona una señal válida.");
+            }
+        }
+
+        // Función para generar colores aleatorios
+        function getRandomColor() {
+            const letters = '0123456789ABCDEF';
+            let color = '#';
+            for (let i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
+
+        // Asignar el evento click al botón para generar el gráfico
+        document.getElementById('flt1').addEventListener('click', generateChart);
+        // Asignar el evento click al botón para aplicar el filtro NLMS
+        document.getElementById('flt3').addEventListener('click', applyNLMS);
+    </script>
+</body>
+</html>
+

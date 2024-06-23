@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="description" content="NEURON BLE">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="cache-control" content="no-cache, no-store, must-revalidate">
+    <title>NEURON-UDI2024</title>
+    <link rel="stylesheet" href="./style.css">
+    <link rel="manifest" href="/manifest.json">
+<script>
+    function validateForm() {
+        var username = document.getElementById("username").value;
+        var password = document.getElementById("password").value;
+        if (username === "investigador" && password === "udi2024") {
+            window.location.href = 'interfaz1.html'
+            return false;  // Simula el envío exitoso del formulario
+        } else {
+            alert("Usuario o contraseña incorrecta");
+            return false; // Previene el envío del formulario
+        }
+    }
+</script>
+</head>
+<body>
+    <form action="index.html" class="form-box" onsubmit="return validateForm()">
+        <img src="/assets/gps.png" class="img-i" width="200" height="150"/>
+        <h1 class="form-title">Acceder</h1>
+        <input type="text" placeholder="Username" id="username">
+        <input type="password" placeholder="Password" id="password">
+        <button type="submit">Login</button>
+    </form>
+</body>
+</html>
